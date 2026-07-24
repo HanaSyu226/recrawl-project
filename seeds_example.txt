@@ -1,0 +1,63 @@
+# Seed URLs for longitudinal change tracking
+# Format:  URL <TAB> category
+#
+# Aim for 3000-5000 URLs across varied volatility profiles.
+# The categories below are a starting taxonomy -- adjust as you go.
+#
+# SELECTION RULES:
+#   1. Check robots.txt allows crawling before adding
+#   2. Prefer stable, long-lived sites (avoid anything likely to vanish)
+#   3. Balance across categories -- you need both volatile AND static pages
+#   4. Avoid login-walled, paywalled, or heavily JS-rendered pages
+#   5. Include Malay/Chinese/regional sites if you want a multilingual angle later
+
+# ---- HIGH VOLATILITY (expect daily or faster change) ----
+https://www.bernama.com/en/	news-national
+https://www.thestar.com.my/news/nation	news-national
+https://www.malaymail.com/	news-national
+https://news.ycombinator.com/	news-aggregator
+https://arxiv.org/list/cs.IR/recent	academic-listing
+
+# ---- MEDIUM VOLATILITY (weekly to monthly) ----
+https://blog.python.org/	tech-blog
+https://www.mosti.gov.my/	government-portal
+https://www.unimas.my/news	university-news
+
+# ---- LOW VOLATILITY (rare change) ----
+https://docs.python.org/3/library/sqlite3.html	documentation
+https://www.rfc-editor.org/rfc/rfc2616	technical-standard
+
+# ---- STATIC (expected: near-zero change) ----
+https://en.wikipedia.org/wiki/Web_crawler	encyclopedia-stable
+https://www.gutenberg.org/ebooks/1342	archive
+
+
+# ============================================================
+# BUILDING YOUR FULL SEED LIST
+# ============================================================
+#
+# You need 3000-5000 URLs. Do not collect these by hand.
+#
+# Practical sources:
+#   - Wikipedia category dumps (stable, permissive, huge)
+#   - Government open-data portals (.gov.my, .gov.sg)
+#   - University sitemaps (usually at /sitemap.xml)
+#   - News site sitemaps and RSS feeds
+#   - Common Crawl URL index, filtered by domain
+#   - arXiv listing pages by subject
+#
+# A short script that reads sitemap.xml files and samples URLs
+# from each will get you to several thousand quickly.
+#
+# IMPORTANT: keep the category label meaningful. Your analysis
+# depends on being able to compare volatility across page types,
+# and that is only possible if the categories are consistent.
+#
+# Suggested target distribution:
+#   high volatility     ~20%
+#   medium volatility   ~30%
+#   low volatility      ~30%
+#   static              ~20%
+#
+# Do not over-sample news. A dataset that is 80% news pages will
+# tell you nothing about whether your estimator generalises.

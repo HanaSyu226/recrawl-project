@@ -1,0 +1,11 @@
+# Local-only artifacts (not needed in the repo)
+backups/
+*.log
+run_backup.bat
+
+# Python
+__pycache__/
+*.pyc
+
+# OS
+Thumbs.db
