@@ -121,7 +121,15 @@ _robots_cache = {}
 
 
 def robots_allows(url):
-    """Check robots.txt. Fails open on error, but logs it."""
+    """Check robots.txt. Fails open on error, but logs it.
+
+    Fetches robots.txt with our own USER_AGENT header via requests, rather
+    than RobotFileParser.read() (which fetches with urllib's generic
+    default User-Agent). Some sites -- Wikipedia among them -- return 403
+    to that generic string as an anti-bot measure, which makes
+    RobotFileParser treat the entire domain as disallowed even when the
+    real rules would allow us in under our actual, identified User-Agent.
+    """
     parsed = urlparse(url)
     base = f"{parsed.scheme}://{parsed.netloc}"
 
@@ -129,9 +137,19 @@ def robots_allows(url):
         rp = RobotFileParser()
         rp.set_url(f"{base}/robots.txt")
         try:
-            rp.read()
+            resp = requests.get(
+                f"{base}/robots.txt",
+                headers={"User-Agent": USER_AGENT},
+                timeout=REQUEST_TIMEOUT,
+            )
+            if resp.status_code == 200:
+                rp.parse(resp.text.splitlines())
+            elif resp.status_code in (401, 403):
+                rp.disallow_all = True
+            else:
+                rp.allow_all = True
             _robots_cache[base] = rp
-        except Exception as e:
+        except requests.RequestException as e:
             log.warning("Could not read robots.txt for %s: %s", base, e)
             _robots_cache[base] = None
 
