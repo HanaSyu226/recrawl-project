@@ -1,0 +1,42 @@
+# Input file for build_seeds.py
+# Format: homepage_or_section_url<TAB>category
+#
+# build_seeds.py finds each site's sitemap.xml (or the sitemap declared
+# in robots.txt), samples up to 30 URLs, and checks robots.txt permission
+# per URL before writing it to seeds.txt.
+#
+# Categories carry a volatility tier (grouped below) and, where relevant,
+# a language suffix (-ms Malay, -zh Chinese) so the multilingual research
+# question can be filtered later without changing the URL<TAB>category
+# schema that change_tracker.py already expects.
+
+# ---- FAST (news, aggregators) ----
+https://www.thestar.com.my/	news-national
+https://www.malaymail.com/	news-national
+https://www.bernama.com/en/	news-national
+https://www.sinarharian.com.my/	news-national-ms
+https://www.sinchew.com.my/	news-national-zh
+https://www.channelnewsasia.com/	news-regional
+https://news.ycombinator.com/	news-aggregator
+https://arxiv.org/	academic-listing
+
+# ---- MEDIUM (government portals, university news, blogs) ----
+https://www.mosti.gov.my/	government-portal
+https://www.data.gov.my/	government-portal
+https://www.unimas.my/	university-news
+https://www.um.edu.my/	university-news
+https://blog.python.org/	tech-blog
+https://css-tricks.com/	tech-blog
+
+# ---- SLOW (documentation, technical standards) ----
+https://docs.python.org/3/	documentation
+https://developer.mozilla.org/en-US/	documentation
+https://developer.mozilla.org/ms/	documentation-ms
+https://www.w3.org/	technical-standard
+https://www.rfc-editor.org/	technical-standard
+
+# ---- STATIC (encyclopedia, archives) ----
+https://en.wikipedia.org/	encyclopedia-stable
+https://ms.wikipedia.org/	encyclopedia-stable-ms
+https://zh.wikipedia.org/	encyclopedia-stable-zh
+https://www.gutenberg.org/	archive
