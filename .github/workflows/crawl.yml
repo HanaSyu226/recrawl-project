@@ -1,0 +1,56 @@
+name: Crawl and track page changes
+
+on:
+  schedule:
+    # Twice daily: 03:00 and 15:00 UTC (11:00 and 23:00 in Malaysia, UTC+8)
+    - cron: "0 3 * * *"
+    - cron: "0 15 * * *"
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: "Optional: cap number of pages fetched (for manual test runs)"
+        required: false
+        default: ""
+
+permissions:
+  contents: write # required so the workflow can push the updated database back
+
+concurrency:
+  group: crawl-workflow
+  cancel-in-progress: false # queue overlapping runs instead of racing them
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install requests trafilatura
+
+      - name: Run collection pass
+        run: |
+          if [ -n "${{ github.event.inputs.limit }}" ]; then
+            python change_tracker.py --run --limit "${{ github.event.inputs.limit }}"
+          else
+            python change_tracker.py --run
+          fi
+
+      - name: Commit and push updated database
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add change_data.db
+          if git diff --cached --quiet; then
+            git commit --allow-empty -m "Scheduled crawl: no data changes $(date -u +'%Y-%m-%d %H:%M UTC')"
+          else
+            git commit -m "Scheduled crawl: $(date -u +'%Y-%m-%d %H:%M UTC')"
+          fi
+          git push
